@@ -1,0 +1,6 @@
+eclipse.preferences.version=1
+environment/project/0.1465500151/PATH/delimiter=\:
+environment/project/0.1465500151/PATH/operation=replace
+environment/project/0.1465500151/PATH/value=/opt/android-ndk-r8d\:/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/usr/games\:${PATH}
+environment/project/0.1465500151/append=true
+environment/project/0.1465500151/appendContributed=true

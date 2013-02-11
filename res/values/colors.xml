@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Menu -->
+    <color name="background">#ffffCC</color>
+    
+    <!-- Game -->
+    <color name="tile_background">#ffffCC</color>
+    <color name="minor_line">#8b5a2b</color>
+    <color name="major_line">#605f46</color>
+    <color name="origin_numbers">#000000</color>
+    <color name="userinput_numbers">#0000ee</color>
+    <color name="selected_tile">#ffffdd</color>
+</resources>
