@@ -41,17 +41,17 @@ public class ImportGridActivity extends Activity{
                     //Build objects depending on opencv
                     ImageView imgContainer = (ImageView)findViewById(R.id.grid_view);
             		String path = Environment.getExternalStorageDirectory().getPath()+"/sudoku.png";
-            		picture = new GridPicture(path);
+            		//picture = new GridPicture(path);
             		//Mat im = picture.getPicture();
             		//Mat im = picture.extractAreas();
-            		picture.extractAreas();
-            		Mat im = picture.viewSample(0,4);
+            		//picture.extractAreas();
+            		//Mat im = picture.viewSample(0,4);
             		/*Sample samp = new Sample(im);
             		FeatureExtractor fe = new FeatureExtractor(samp);
             		im = fe.getNumber();*/
-            		pictureView = Bitmap.createBitmap(im.cols(), im.rows(), Bitmap.Config.ARGB_8888);
+            		/*pictureView = Bitmap.createBitmap(im.cols(), im.rows(), Bitmap.Config.ARGB_8888);
             		Utils.matToBitmap(im, pictureView);
-            		imgContainer.setImageBitmap(pictureView);
+            		imgContainer.setImageBitmap(pictureView);*/
                 } break;
                 default:
                 {

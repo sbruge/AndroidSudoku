@@ -31,7 +31,7 @@ public class GameActivity extends Activity{
 		grid.insertValue(1, 6, 2, Input.ORIGINAL);*/
         String path = Environment.getExternalStorageDirectory().getPath()+"/sudoku.png";
 		GridPicture picture = new GridPicture(path);
-		picture.extractAreas();
+		//picture.extractAreas();
 		grid = picture.buildGame();
 		
 		gridView = new GridView(this);

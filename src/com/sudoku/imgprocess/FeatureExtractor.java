@@ -6,6 +6,7 @@ import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
@@ -21,13 +22,14 @@ public class FeatureExtractor {
 	public FeatureExtractor(Sample sample){
 		features = new Mat(1,26,CvType.CV_32F);
 		number=sample.getArea();
-		Imgproc.threshold(number, number, 0, 200, Imgproc.THRESH_OTSU);
+		//Imgproc.threshold(number, number, 0, 200, Imgproc.THRESH_OTSU);
 		resizeSample(2);
 		Imgproc.Canny(number,number,100,175);
 	    inverse(number);
 		buildCurls();
 		buildJunctions();
 		buildHLines();
+		buildDensity(3);
 		extractFeatures();
 	}
 	
@@ -99,18 +101,14 @@ public class FeatureExtractor {
 	// Compute curls array
 	boolean closeArea(int i1, int i2){
 		int j=number.cols()/2;
-		Log.i("features", String.valueOf(j));
 	    for(int r=i1; r<=i2;r++){
-	    	Log.i("line", String.valueOf(r));
 	        int j1=j;
 	        int j2=j+1;
 	        while(number.get(r,j1)[0] != 0 && j1>0){
-	        	//Log.i("J1", String.valueOf(j1));
 	            j1--;
 	        }
 	        while(number.get(r,j2)[0]!=0 && j2<number.cols()-1){
 	            j2++;
-	            //Log.i("J2", String.valueOf(number.get(r,j2)[0]));
 	        }
 	        if((j1==0 || j2==number.cols())){
 	            return false;
@@ -141,8 +139,6 @@ public class FeatureExtractor {
 	            while(number.get(r2,c)[0]!=0 && r2<number.rows()-1){
 	                r2++;
 	            }
-	            //Log.i("num of rows",String.valueOf(number.rows()));
-	            //Log.i("features", String.valueOf(r1)+" "+String.valueOf(r2));
 	            if(closeArea(r1,r2)==true){
 	                Point p= new Point(c,r1+(r2-r1)/2.);
 	                curls.add(p);
@@ -275,6 +271,31 @@ public class FeatureExtractor {
 	    for(int i=0; i<junctions.size();i++){
 	        int zone = localize(junctions.get(i));
 	        features.get(0,7+zone)[0]=1;
+	    }
+	}
+	
+	// Add area density in feature vector
+	
+	int countPx(Mat m){
+	    int k=0;
+	    for(int r=0;r<m.rows();r++){
+	        for(int c=0; c<m.cols(); c++){
+	            if(m.get(r,c)[0]==0){
+	                k++;
+	            }
+	        }
+	    }
+	    return k;
+	}
+	
+	void buildDensity(int nb_zone){
+	    for(int i=0; i<nb_zone; i++){
+	        for(int j=0; j<nb_zone;j++){
+	            Rect r = new Rect(new Point(i*number.cols()/nb_zone,j*number.rows()/nb_zone),new Point((i+1)*number.cols()/nb_zone,(j+1)*number.rows()/nb_zone));
+	            Mat submatrix = number.submat(r);
+	            int f = countPx(submatrix);
+	            features.put(0,17+nb_zone*i+j,f);
+	        }
 	    }
 	}
 	

@@ -13,14 +13,14 @@ public class Sample {
 		super();
 		area = new Mat();
 		Imgproc.cvtColor(sample, area, Imgproc.COLOR_RGB2GRAY);
+		Imgproc.threshold(area, area, 0, 200, Imgproc.THRESH_OTSU);
 	}
 
 	public Mat getArea() {
 		return area;
 	}
 	
-	public boolean isNumber(){
-		int nbOfPixels = area.cols()*area.rows();
+	public boolean isNumber(int min, int max){
 		int nbOfBlackPxl = 0;
 		for(int i=5; i<area.cols()-5;i++){
 			for(int j=5; j<area.rows();j++){
@@ -29,11 +29,8 @@ public class Sample {
 				}
 			}
 		}
-		Log.i("nbPxls",String.valueOf(nbOfPixels));
-		Log.i("10%nbPxls",String.valueOf(nbOfPixels*0.1));
-		Log.i("BckPxls",String.valueOf(nbOfBlackPxl));
-		
-		return nbOfBlackPxl > nbOfPixels*0.06;
+		//Log.i("BckPxls",String.valueOf(nbOfBlackPxl));
+		return nbOfBlackPxl > min+(max-min)/3;
 	}
 
 }
