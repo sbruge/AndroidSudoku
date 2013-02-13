@@ -29,7 +29,7 @@ public class GameActivity extends Activity{
 		//grid = new SudokuGrid();
 		/*grid.insertValue(3, 3, 5, Input.ORIGINAL);
 		grid.insertValue(1, 6, 2, Input.ORIGINAL);*/
-        String path = Environment.getExternalStorageDirectory().getPath()+"/sudoku.png";
+        String path = Environment.getExternalStorageDirectory().getPath()+"/sudoku.jpg";
 		GridPicture picture = new GridPicture(path);
 		//picture.extractAreas();
 		grid = picture.buildGame();
