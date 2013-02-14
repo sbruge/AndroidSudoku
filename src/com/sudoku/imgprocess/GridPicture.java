@@ -2,6 +2,7 @@ package com.sudoku.imgprocess;
 
 import java.util.ArrayList;
 
+import org.opencv.android.Utils;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -14,6 +15,7 @@ import org.opencv.imgproc.Imgproc;
 import com.sudoku.objects.SudokuData.Input;
 import com.sudoku.objects.SudokuGrid;
 
+import android.graphics.Bitmap;
 import android.util.Log;
 
 public class GridPicture {
@@ -37,6 +39,23 @@ public class GridPicture {
 		Imgproc.cvtColor(picture, mgray, Imgproc.COLOR_BGR2GRAY);
 		extractAreas();
 		buildRects();
+	}
+	
+	public GridPicture(Bitmap bmp) {
+		picture = new Mat();
+		Utils.bitmapToMat(bmp, picture);
+		mgray = new Mat();
+		hlines = new ArrayList<Integer>();
+		vlines = new ArrayList<Integer>();
+		areas = new ArrayList<Rect>();
+		maxPx=0;
+		minPx=0;
+		Imgproc.cvtColor(picture, mgray, Imgproc.COLOR_BGR2GRAY);
+		Log.i("sudoGrid","start extract");
+		extractAreas();
+		if(isValidGrid()){
+			buildRects();
+		}
 	}
 
 	public Mat getPicture() {
