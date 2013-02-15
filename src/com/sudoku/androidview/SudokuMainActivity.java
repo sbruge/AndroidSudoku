@@ -45,7 +45,7 @@ public class SudokuMainActivity extends Activity implements OnClickListener{
 				startActivity(in_import);
 				break;
 			case R.id.continue_button:
-				Intent in_continue = new Intent(this,GameActivity.class);
+				Intent in_continue = new Intent(this,TestResult.class);
 				startActivity(in_continue);
 				break;
 			case R.id.about_button:

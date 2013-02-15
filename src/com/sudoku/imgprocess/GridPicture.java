@@ -37,7 +37,9 @@ public class GridPicture {
 		maxPx=0;
 		minPx=0;
 		Imgproc.cvtColor(picture, mgray, Imgproc.COLOR_BGR2GRAY);
+		//Imgproc.Canny(mgray, picture, 30, 85);
 		extractAreas();
+		Log.e("sudogrid","error in grid:"+String.valueOf(hlines.size())+";"+String.valueOf(vlines.size()));
 		buildRects();
 	}
 	
@@ -54,7 +56,11 @@ public class GridPicture {
 		Log.i("sudoGrid","start extract");
 		extractAreas();
 		if(isValidGrid()){
+			Log.i("sudogrid", "valid grid!");
 			buildRects();
+		}
+		else{
+			Log.i("sudogrid","error in grid:"+String.valueOf(hlines.size())+";"+String.valueOf(vlines.size()));
 		}
 	}
 
@@ -124,9 +130,9 @@ public class GridPicture {
 
 	void extractAreas() {
 		Mat extracted = new Mat();
-		Imgproc.Canny(mgray, extracted, 100, 175);
+		Imgproc.Canny(mgray, extracted, 30, 75);
 		Mat accu = houghAccumulation(extracted, picture.rows(), picture.cols());
-		buildLines(picture, 75, accu);
+		buildLines(picture, 115, accu);
 	}
 
 	Mat houghAccumulation(Mat contour, int r, int c) {
@@ -148,7 +154,7 @@ public class GridPicture {
 	}
 
 	void addLine(int rho, ArrayList<Integer> lines) {
-		int threshold = 10;
+		int threshold = 15; //10
 		if (lines.size() == 0) {
 			lines.add(rho);
 		} else {
@@ -162,6 +168,7 @@ public class GridPicture {
 			}
 			if (rho - lines.get(previousIndex) > threshold) {
 				lines.add(previousIndex + 1, rho);
+				//Log.i("indx",String.valueOf(rho));
 			}
 		}
 	}
@@ -175,17 +182,21 @@ public class GridPicture {
 					if (j == 0) { // horizontal line
 						p1 = new Point(rho, 0);
 						p2 = new Point(rho, img.rows());
+						//Core.line(picture,p1,p2,new Scalar(0,255,0));
 						addLine(rho, hlines);
 					} else if (j == 4) { // vertical line
 						p1 = new Point(0, rho);
 						p2 = new Point(img.cols(), rho);
+						//Core.line(picture,p1,p2,new Scalar(0,255,0));
 						addLine(rho, vlines);
 					}
-					/*
-					 * else { p1 = new Point(0, rho / Math.sin(theta)); p2 = new
-					 * Point(rho / Math.cos(theta), 0); //
-					 * line(lines,p1,p2,CV_RGB(255,0,0),1,8,0); }
-					 */
+					
+					 /*else { 
+						 p1 = new Point(0, rho / Math.sin(theta)); 
+						 p2 = new Point(rho / Math.cos(theta), 0);
+						 Core.line(picture,p1,p2,new Scalar(255,255,0));
+					 }*/
+					 
 
 				}
 			}
@@ -197,7 +208,7 @@ public class GridPicture {
 	public Mat showAreas(){
 		Mat img = picture.clone();
 		for(int r=0;r<areas.size();r++){
-			Core.rectangle(img, areas.get(r).br(),areas.get(r).tl(), new Scalar(0,255,0),1,8,0);
+			Core.rectangle(img, areas.get(r).tl(),areas.get(r).br(), new Scalar(0,0,255),2,8,0);
 		}
 		return img;
 	}

@@ -7,6 +7,7 @@ import android.content.Context;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.PictureDrawable;
 import android.hardware.Camera;
+import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.PictureCallback;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -44,7 +45,16 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback{
 	}
 
 	public void surfaceCreated(SurfaceHolder holder) {
+		AutoFocusCallback autofocusCb = new AutoFocusCallback() {
+			
+			@Override
+			public void onAutoFocus(boolean success, Camera camera) {
+				// TODO Auto-generated method stub
+				
+			}
+		};
           mCamera = Camera.open();
+          mCamera.autoFocus(autofocusCb);
           mCamera.getParameters().setPictureFormat(PixelFormat.JPEG);
         try {
           mCamera.setPreviewDisplay(holder);

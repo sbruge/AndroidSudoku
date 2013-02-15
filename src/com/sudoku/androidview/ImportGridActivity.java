@@ -9,12 +9,15 @@ import org.opencv.android.OpenCVLoader;
 
 
 import com.sudoku.imgprocess.GridPicture;
+import com.sudoku.objects.SudokuGrid;
 
 
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.hardware.Camera;
+import android.hardware.Camera.AutoFocusCallback;
 
 import android.os.Bundle;
 
@@ -61,14 +64,24 @@ public class ImportGridActivity extends Activity {
         	@Override
         	public boolean onTouch(View v, MotionEvent event) {
         		Log.i("ontouch","touch!");
+        		AutoFocusCallback autofocusCb = new AutoFocusCallback() {
+        			
+        			@Override
+        			public void onAutoFocus(boolean success, Camera camera) {
+        				// TODO Auto-generated method stub
+        				
+        			}
+        		};
+        		cameraView.getCamera().autoFocus(autofocusCb);
         		if(cameraView.getCamera()!=null){
         			boolean aquisitionSuccess = cameraView.takePicture();
         			if(aquisitionSuccess==true){
         				Intent intent = new Intent(ImportGridActivity.this,GameActivity.class);	
         				byte[] data = cameraView.getDataStored();
         				picture = BitmapFactory.decodeByteArray(data,0,data.length);
-        				//picture.compress(format, quality, stream);
-        				intent.putExtra("pictureData", picture);
+        				GridPicture gridPicture = new GridPicture(picture);
+        				SudokuGrid grid = gridPicture.buildGame();
+        				intent.putExtra("sudokuGrid", grid);
         				Log.i("start ac","start activity");
         				startActivity(intent);
         				//cameraView.stopCamera();

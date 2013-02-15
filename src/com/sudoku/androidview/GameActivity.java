@@ -23,7 +23,7 @@ import android.widget.Toast;
 public class GameActivity extends Activity{
 	
 	private final static String TAG = "Game";
-	private Bitmap picture;
+
 	private SudokuGrid grid;
 	private GridView gridView;
     
@@ -32,19 +32,14 @@ public class GameActivity extends Activity{
 		super.onCreate(savedInstanceState);
 		Intent intent = getIntent();
 		if(intent!=null){
-			byte[] data = intent.getByteArrayExtra("pictureData");
-			if(data!=null){
-				Log.i(TAG,"build bmp from data");
-				picture = BitmapFactory.decodeByteArray(data,0,data.length);
+			grid = intent.getParcelableExtra("sudokuGrid");
+			if(grid!=null){
+				gridView = new GridView(this);
 			}
 			else{
-				Log.e("gridpicture","no data in bmp");
+				Log.e("gridpicture","no data to load");
 			}
 		}
-		GridPicture gridPicture = new GridPicture(picture);
-		grid = gridPicture.buildGame();
-		
-		gridView = new GridView(this);
 		setContentView(gridView);
 		gridView.requestFocus();
 	}
