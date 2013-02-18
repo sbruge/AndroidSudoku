@@ -61,6 +61,7 @@ containing a value of this type.
         public static final int exit_button=0x7f040007;
         public static final int front=0x7f040002;
         public static final int grid_view=0x7f040008;
+        public static final int img_view=0x7f040014;
         public static final int import_button=0x7f040004;
         public static final int key_1=0x7f04000a;
         public static final int key_2=0x7f04000b;
@@ -73,7 +74,7 @@ containing a value of this type.
         public static final int key_9=0x7f040012;
         public static final int key_clear=0x7f040013;
         public static final int keypad=0x7f040009;
-        public static final int menu_settings=0x7f040014;
+        public static final int menu_settings=0x7f040015;
     }
     public static final class layout {
         public static final int about=0x7f030000;
@@ -81,6 +82,7 @@ containing a value of this type.
         public static final int game=0x7f030002;
         public static final int import_grid=0x7f030003;
         public static final int keypad=0x7f030004;
+        public static final int test=0x7f030005;
     }
     public static final class menu {
         public static final int activity_sudoku_main=0x7f080000;

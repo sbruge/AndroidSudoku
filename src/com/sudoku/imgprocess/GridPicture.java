@@ -9,6 +9,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
 
@@ -30,6 +31,7 @@ public class GridPicture {
 
 	public GridPicture(String filename) {
 		picture = Highgui.imread(filename);
+		Imgproc.resize(picture, picture, new Size(400,400));
 		mgray = new Mat();
 		hlines = new ArrayList<Integer>();
 		vlines = new ArrayList<Integer>();
@@ -37,7 +39,10 @@ public class GridPicture {
 		maxPx=0;
 		minPx=0;
 		Imgproc.cvtColor(picture, mgray, Imgproc.COLOR_BGR2GRAY);
-		//Imgproc.Canny(mgray, picture, 30, 85);
+		Imgproc.blur(mgray, mgray, new Size(3,3), new Point(-1,-1));
+		Imgproc.blur(mgray, mgray, new Size(3,3), new Point(-1,-1));
+		Imgproc.equalizeHist(mgray,mgray);
+		Imgproc.Canny(mgray, mgray, 50,150);
 		extractAreas();
 		Log.e("sudogrid","error in grid:"+String.valueOf(hlines.size())+";"+String.valueOf(vlines.size()));
 		buildRects();
@@ -130,9 +135,9 @@ public class GridPicture {
 
 	void extractAreas() {
 		Mat extracted = new Mat();
-		Imgproc.Canny(mgray, extracted, 30, 75);
-		Mat accu = houghAccumulation(extracted, picture.rows(), picture.cols());
-		buildLines(picture, 115, accu);
+		//Imgproc.Canny(mgray, extracted, 30, 75);
+		Mat accu = houghAccumulation(mgray, picture.rows(), picture.cols());
+		buildLines(picture, 75, accu);
 	}
 
 	Mat houghAccumulation(Mat contour, int r, int c) {
@@ -154,7 +159,7 @@ public class GridPicture {
 	}
 
 	void addLine(int rho, ArrayList<Integer> lines) {
-		int threshold = 15; //10
+		int threshold = 10; //10
 		if (lines.size() == 0) {
 			lines.add(rho);
 		} else {

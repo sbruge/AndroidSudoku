@@ -16,6 +16,7 @@ int id continue_button 0x7f040005
 int id exit_button 0x7f040007
 int id front 0x7f040002
 int id grid_view 0x7f040008
+int id img_view 0x7f040014
 int id import_button 0x7f040004
 int id key_1 0x7f04000a
 int id key_2 0x7f04000b
@@ -28,12 +29,13 @@ int id key_8 0x7f040011
 int id key_9 0x7f040012
 int id key_clear 0x7f040013
 int id keypad 0x7f040009
-int id menu_settings 0x7f040014
+int id menu_settings 0x7f040015
 int layout about 0x7f030000
 int layout activity_sudoku_main 0x7f030001
 int layout game 0x7f030002
 int layout import_grid 0x7f030003
 int layout keypad 0x7f030004
+int layout test 0x7f030005
 int menu activity_sudoku_main 0x7f080000
 int string about_content 0x7f060009
 int string about_label 0x7f060006

@@ -38,6 +38,11 @@
             android:name=".ImportGridActivity"
             android:label="@string/import_label">
         </activity>
+        
+        <activity
+            android:name=".TestResult"
+            android:label="@string/import_label">
+        </activity>
     </application>
 
 </manifest>
