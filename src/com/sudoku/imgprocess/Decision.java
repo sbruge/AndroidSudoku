@@ -38,7 +38,7 @@ public class Decision {
 	    for(int i=17;i<m2.cols();i++){
 	        d+= Math.pow(m2.get(0,i)[0]-m1[i],2);
 	    }
-	    Log.d("distance", String.valueOf(d));
+	    //Log.d("distance", String.valueOf(d));
 	    return Math.sqrt(d);
 	}
 

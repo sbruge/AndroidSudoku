@@ -28,7 +28,8 @@ public class TestResult extends Activity{
                 {
                     Log.i("loading opCV", "OpenCV loaded successfully");
                     GridPicture gp = new GridPicture("/mnt/sdcard/sudoku.jpg");
-                    Mat m=gp.showAreas();
+                    gp.buildGame();
+                    Mat m=gp.getPicture();
                     picture = Bitmap.createBitmap(m.cols(), m.rows(), Config.ARGB_8888); 
                     Utils.matToBitmap(m, picture);
                     ImageView view = (ImageView) findViewById(R.id.img_view);

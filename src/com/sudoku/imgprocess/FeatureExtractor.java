@@ -22,10 +22,9 @@ public class FeatureExtractor {
 	public FeatureExtractor(Sample sample){
 		features = new Mat(1,26,CvType.CV_32F);
 		number=sample.getArea();
-		//Imgproc.threshold(number, number, 0, 200, Imgproc.THRESH_OTSU);
+		inverse(number);
 		resizeSample(2);
-		Imgproc.Canny(number,number,100,175);
-	    inverse(number);
+	    
 		buildCurls();
 		buildJunctions();
 		buildHLines();

@@ -44,18 +44,10 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback{
 		}
 	}
 
-	public void surfaceCreated(SurfaceHolder holder) {
-		AutoFocusCallback autofocusCb = new AutoFocusCallback() {
-			
-			@Override
-			public void onAutoFocus(boolean success, Camera camera) {
-				// TODO Auto-generated method stub
-				
-			}
-		};
+	public void surfaceCreated(SurfaceHolder holder) {	
           mCamera = Camera.open();
-          mCamera.autoFocus(autofocusCb);
           mCamera.getParameters().setPictureFormat(PixelFormat.JPEG);
+          
         try {
           mCamera.setPreviewDisplay(holder);
         } catch (IOException exception) {
@@ -80,6 +72,7 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback{
     		parameters.setPreviewSize(h, w);
     		mCamera.setDisplayOrientation(270);
     	}
+    	parameters.setPreviewSize(400, 400);
     	mCamera.setParameters(parameters);
     	mCamera.startPreview();
     }

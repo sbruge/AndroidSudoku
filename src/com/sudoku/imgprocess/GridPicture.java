@@ -28,6 +28,7 @@ public class GridPicture {
 	private ArrayList<Integer> hlines;
 	private ArrayList<Integer> vlines;
 	private ArrayList<Rect> areas;
+	private ArrayList<Sample> samples;
 
 	public GridPicture(String filename) {
 		picture = Highgui.imread(filename);
@@ -36,13 +37,14 @@ public class GridPicture {
 		hlines = new ArrayList<Integer>();
 		vlines = new ArrayList<Integer>();
 		areas = new ArrayList<Rect>();
+		samples = new ArrayList<Sample>();
 		maxPx=0;
 		minPx=0;
 		Imgproc.cvtColor(picture, mgray, Imgproc.COLOR_BGR2GRAY);
-		Imgproc.blur(mgray, mgray, new Size(3,3), new Point(-1,-1));
-		Imgproc.blur(mgray, mgray, new Size(3,3), new Point(-1,-1));
-		Imgproc.equalizeHist(mgray,mgray);
-		Imgproc.Canny(mgray, mgray, 50,150);
+		//Imgproc.blur(mgray, mgray, new Size(3,3), new Point(-1,-1));
+		//Imgproc.blur(mgray, mgray, new Size(3,3), new Point(-1,-1));
+		//Imgproc.equalizeHist(mgray,mgray);
+		Imgproc.Canny(mgray, mgray, 25,150);
 		extractAreas();
 		Log.e("sudogrid","error in grid:"+String.valueOf(hlines.size())+";"+String.valueOf(vlines.size()));
 		buildRects();
@@ -51,14 +53,21 @@ public class GridPicture {
 	public GridPicture(Bitmap bmp) {
 		picture = new Mat();
 		Utils.bitmapToMat(bmp, picture);
+		Imgproc.resize(picture, picture, new Size(400,400));
 		mgray = new Mat();
 		hlines = new ArrayList<Integer>();
 		vlines = new ArrayList<Integer>();
 		areas = new ArrayList<Rect>();
+		samples = new ArrayList<Sample>();
 		maxPx=0;
 		minPx=0;
 		Imgproc.cvtColor(picture, mgray, Imgproc.COLOR_BGR2GRAY);
 		Log.i("sudoGrid","start extract");
+		Imgproc.cvtColor(picture, mgray, Imgproc.COLOR_BGR2GRAY);
+		/*Imgproc.blur(mgray, mgray, new Size(3,3), new Point(-1,-1));
+		Imgproc.blur(mgray, mgray, new Size(3,3), new Point(-1,-1));
+		Imgproc.equalizeHist(mgray,mgray);*/
+		Imgproc.Canny(mgray, mgray, 10,150);
 		extractAreas();
 		if(isValidGrid()){
 			Log.i("sudogrid", "valid grid!");
@@ -98,11 +107,11 @@ public class GridPicture {
 		for(int c=0; c<vlines.size()-1;c++){
 			for(int r=0; r<hlines.size()-1;r++){
 				Point p1 = new Point(hlines.get(r)+blank, vlines.get(c)+blank);
-				Point p2= new Point(hlines.get(r+1), vlines.get(c+1));
+				Point p2= new Point(hlines.get(r+1)-blank+2, vlines.get(c+1)-blank+2);
 				Rect rec = new Rect(p1,p2);
-				Mat m = mgray.submat(rec);
-				Imgproc.threshold(m, m, 0, 200, Imgproc.THRESH_OTSU);
-				int count = countPx(m);
+				Mat m = picture.submat(rec);
+				Sample s = new Sample(m);
+				int count = s.countPx();
 				if(count>maxPx){
 					maxPx=count;
 				}
@@ -110,19 +119,21 @@ public class GridPicture {
 					minPx=count;
 				}
 				areas.add(rec);
+				samples.add(s);
 			}
 		}
 	}
 
 	public SudokuGrid buildGame() {
 		SudokuGrid grid = new SudokuGrid();
-		for(int r=0; r<areas.size();r++){
-			Sample s = new Sample(picture.submat(areas.get(r)));
+		for(int r=0; r<samples.size();r++){
+			Sample s = samples.get(r);
 			if(s.isNumber(minPx,maxPx)){
 				int j = r/9;
 				int i = r%9;
 				Decision decision = new Decision(s);
 				grid.insertValue(i,j, decision.getDecision(), Input.ORIGINAL);
+				Core.rectangle(picture, areas.get(r).tl(),areas.get(r).br(), new Scalar(0,255,0),2,8,0);
 			}
 		}
 		return grid;
@@ -137,7 +148,7 @@ public class GridPicture {
 		Mat extracted = new Mat();
 		//Imgproc.Canny(mgray, extracted, 30, 75);
 		Mat accu = houghAccumulation(mgray, picture.rows(), picture.cols());
-		buildLines(picture, 75, accu);
+		buildLines(picture, 105, accu);
 	}
 
 	Mat houghAccumulation(Mat contour, int r, int c) {
@@ -216,5 +227,9 @@ public class GridPicture {
 			Core.rectangle(img, areas.get(r).tl(),areas.get(r).br(), new Scalar(0,0,255),2,8,0);
 		}
 		return img;
+	}
+	
+	public Mat viewSample(int i){
+		return samples.get(i).getArea();
 	}
 }

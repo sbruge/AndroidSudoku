@@ -26,13 +26,22 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.RelativeLayout.LayoutParams;
+import android.widget.ScrollView;
 
 public class ImportGridActivity extends Activity {
 	private static final String TAG = "ImportGrid";
 	
 	//private GridPicture grid;
 	private CameraView cameraView;
+	private FrameLayout mainLayout;
+	private RelativeLayout buttonLayout;
 	private Bitmap picture;
+	private boolean ready; 
 	
 	private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -57,42 +66,74 @@ public class ImportGridActivity extends Activity {
         Log.i(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON); 
+        
+        ready = false;
         cameraView = new CameraView(this);
-        setContentView(cameraView);	 
-        cameraView.setOnTouchListener(new OnTouchListener() {
+        mainLayout = new FrameLayout(this);
+        buttonLayout = new RelativeLayout(this);
+        
+        Button takePicture = new Button(this);
+        takePicture.setText("Take Picture");
+        Button importGrid = new Button(this);
+        importGrid.setText("Import");
+        
+       RelativeLayout.LayoutParams paramsButton = new LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
+       RelativeLayout.LayoutParams mainParams = new LayoutParams(RelativeLayout.LayoutParams.FILL_PARENT,RelativeLayout.LayoutParams.FILL_PARENT);
+       buttonLayout.setLayoutParams(mainParams);
+       
+       buttonLayout.addView(takePicture);
+       buttonLayout.addView(importGrid);
+       paramsButton.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
+       paramsButton.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
+       takePicture.setLayoutParams(paramsButton);
+       //importGrid.setLayoutParams(paramsButton);
+       
+       mainLayout.addView(cameraView);
+       mainLayout.addView(buttonLayout);
+       setContentView(mainLayout);
+       
+       takePicture.setOnTouchListener(new View.OnTouchListener() {
 
-        	@Override
-        	public boolean onTouch(View v, MotionEvent event) {
-        		Log.i("ontouch","touch!");
-        		AutoFocusCallback autofocusCb = new AutoFocusCallback() {
-        			
-        			@Override
-        			public void onAutoFocus(boolean success, Camera camera) {
-        				// TODO Auto-generated method stub
-        				
-        			}
-        		};
-        		cameraView.getCamera().autoFocus(autofocusCb);
-        		if(cameraView.getCamera()!=null){
-        			boolean aquisitionSuccess = cameraView.takePicture();
-        			if(aquisitionSuccess==true){
-        				Intent intent = new Intent(ImportGridActivity.this,GameActivity.class);	
-        				byte[] data = cameraView.getDataStored();
-        				picture = BitmapFactory.decodeByteArray(data,0,data.length);
-        				GridPicture gridPicture = new GridPicture(picture);
-        				SudokuGrid grid = gridPicture.buildGame();
-        				intent.putExtra("sudokuGrid", grid);
-        				Log.i("start ac","start activity");
-        				startActivity(intent);
-        				//cameraView.stopCamera();
-        			}
-        		}
-        		else{
-        			Log.i("ontouch","camera null");
-        		}
-        		return false;
-        	}
-		});
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+			if(event.getAction()==MotionEvent.ACTION_DOWN){
+				Log.i("event","push");
+				AutoFocusCallback autofocusCb = new AutoFocusCallback() {
+					@Override
+					public void onAutoFocus(boolean success, Camera camera) {
+						if(success==true){
+							Log.i("ontouch","touch!");
+								ready = cameraView.takePicture();
+
+						}
+					}
+				};
+				cameraView.getCamera().autoFocus(autofocusCb);
+				ready = true;
+			}
+			return false;
+		}
+       });
+       
+       importGrid.setOnTouchListener(new OnTouchListener() {
+
+    	   @Override
+    	   public boolean onTouch(View v, MotionEvent event) {
+    		   Log.i("event",String.valueOf(ready));
+    		   if(ready==true){
+    			   Intent intent = new Intent(ImportGridActivity.this,GameActivity.class);	
+    			   byte[] data = cameraView.getDataStored();
+    			   picture = BitmapFactory.decodeByteArray(data,0,data.length);
+    			   GridPicture gridPicture = new GridPicture(picture);
+    			   SudokuGrid grid = gridPicture.buildGame();
+    			   intent.putExtra("sudokuGrid", grid);
+    			   Log.i("start ac","start activity");
+    			   startActivity(intent);
+    			   ready=false;
+    		   }
+    		   return false;
+    	   }
+       });
     }
      
 
