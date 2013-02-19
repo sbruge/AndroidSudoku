@@ -1,12 +1,17 @@
 package com.sudoku.androidview;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 import org.opencv.highgui.Highgui;
+import org.xmlpull.v1.XmlPullParserException;
 
+import com.sudoku.database.Database;
 import com.sudoku.imgprocess.GridPicture;
 
 import android.app.Activity;
@@ -27,7 +32,20 @@ public class TestResult extends Activity{
                 case LoaderCallbackInterface.SUCCESS:
                 {
                     Log.i("loading opCV", "OpenCV loaded successfully");
-                    GridPicture gp = new GridPicture("/mnt/sdcard/sudoku.jpg");
+                    Database db = new Database();
+                    try {
+						InputStream is = getAssets().open("database.xml");
+						try {
+							db.loadXmlDb(is);
+						} catch (XmlPullParserException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+                    GridPicture gp = new GridPicture("/mnt/sdcard/sudoku.jpg",db);
                     gp.buildGame();
                     Mat m=gp.getPicture();
                     picture = Bitmap.createBitmap(m.cols(), m.rows(), Config.ARGB_8888); 

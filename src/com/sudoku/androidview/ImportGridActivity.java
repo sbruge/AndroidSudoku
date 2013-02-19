@@ -1,13 +1,15 @@
 package com.sudoku.androidview;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
+import org.xmlpull.v1.XmlPullParserException;
 
 
+import com.sudoku.database.Database;
 import com.sudoku.imgprocess.GridPicture;
 import com.sudoku.objects.SudokuGrid;
 
@@ -28,10 +30,9 @@ import android.view.View.OnTouchListener;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
-import android.widget.ScrollView;
+
 
 public class ImportGridActivity extends Activity {
 	private static final String TAG = "ImportGrid";
@@ -121,10 +122,25 @@ public class ImportGridActivity extends Activity {
     	   public boolean onTouch(View v, MotionEvent event) {
     		   Log.i("event",String.valueOf(ready));
     		   if(ready==true){
+    			   Database db = new Database();
+    			   try {
+    				   InputStream is = getAssets().open("database.xml");
+    				   try {
+    					   Log.i("db","loading database...");
+    					   db.loadXmlDb(is);
+    				   } catch (XmlPullParserException e) {
+    					   Log.e("db","error in loading");
+    					   e.printStackTrace();
+    				   }
+    			   } catch (IOException e1) {
+    				   // TODO Auto-generated catch block
+    				   e1.printStackTrace();
+    			   }
+
     			   Intent intent = new Intent(ImportGridActivity.this,GameActivity.class);	
     			   byte[] data = cameraView.getDataStored();
     			   picture = BitmapFactory.decodeByteArray(data,0,data.length);
-    			   GridPicture gridPicture = new GridPicture(picture);
+    			   GridPicture gridPicture = new GridPicture(picture,db);
     			   SudokuGrid grid = gridPicture.buildGame();
     			   intent.putExtra("sudokuGrid", grid);
     			   Log.i("start ac","start activity");

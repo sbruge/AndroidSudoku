@@ -1,10 +1,14 @@
 package com.sudoku.androidview;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 
+import com.sudoku.database.Database;
 import com.sudoku.imgprocess.GridPicture;
 import com.sudoku.objects.SudokuData.Input;
 import com.sudoku.objects.SudokuGrid;

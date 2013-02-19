@@ -10,26 +10,23 @@ import org.opencv.core.Rect;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
+import com.sudoku.database.NumberFeatures;
+
 import android.util.Log;
 
 public class FeatureExtractor {
 	private Mat number;
-	private ArrayList<Point> curls;
-	private ArrayList<Point> junctions;
-	private ArrayList<Integer> horizontals;
-	private Mat features;
+	private NumberFeatures features;
 	
 	public FeatureExtractor(Sample sample){
-		features = new Mat(1,26,CvType.CV_32F);
+		features = new NumberFeatures();
 		number=sample.getArea();
 		inverse(number);
-		resizeSample(2);
-	    
-		buildCurls();
-		buildJunctions();
-		buildHLines();
-		buildDensity(3);
-		extractFeatures();
+		resizeSample(0);
+		//buildCurls();
+		Imgproc.resize(number, number, new Size(150,150));
+		buildDensity(5);
+		buildAlign(10);
 	}
 	
 	// Pre-Treating sample
@@ -48,7 +45,7 @@ public class FeatureExtractor {
 	    return histo;
 	}
 
-	ArrayList<Integer>  verticalHisto(Mat img){
+	ArrayList<Integer> verticalHisto(Mat img){
 		ArrayList<Integer> histo = new ArrayList<Integer>();
 	    for(int j=0;j<img.cols();j++){
 	        int nb_pixels=0;
@@ -76,10 +73,12 @@ public class FeatureExtractor {
 	}
 	
 	void resizeSample(int blank){
-	    //Mat resize = Mat.zeros(number.rows()+2*blank,number.cols()+2*blank,CvType.CV_8UC1);
 	    ArrayList<Integer> rows = horizontalHisto(number);
 	    ArrayList<Integer> columns = verticalHisto(number);
-	    int r1=10, r2=rows.size()-10, c1=10, c2=columns.size()-10;
+	    int r1=0;
+	    int r2=rows.size()-1;
+	    int c1=0;
+	    int c2=columns.size()-1;
 	    while(rows.get(r1)==0 && r1<rows.size()-1){
 	        r1++;
 	    }
@@ -93,8 +92,6 @@ public class FeatureExtractor {
 	        c2--;
 	    }
 	    number = number.submat(r1-blank, r2+blank, c1-blank, c2+blank);
-	    Imgproc.resize(number,number,new Size(number.cols()*3,number.rows()*3));
-	    Imgproc.threshold(number,number,100,255,Imgproc.THRESH_OTSU);
 	}
 	
 	// Compute curls array
@@ -116,8 +113,8 @@ public class FeatureExtractor {
 	    return true;
 	}
 	
-	void buildCurls(){
-		curls = new ArrayList<Point>();
+	ArrayList<Point> detectCurls(){
+		ArrayList<Point> curls = new ArrayList<Point>();
 		int c=number.cols()/2;
 	    boolean end=false;
 	    int r1=0;
@@ -151,12 +148,13 @@ public class FeatureExtractor {
 	        	end=true;
 	        }
 	    }
+	    return curls;
 	}
 	
 	// Compute Junctions array with Harris corners
 	
-	void buildJunctions(){
-		junctions = new ArrayList<Point>();
+	ArrayList<Point> detectJunctions(){
+		ArrayList<Point> junctions = new ArrayList<Point>();
 		Mat dst= Mat.zeros( number.size(), CvType.CV_32FC1 );
 		Mat dst_norm = new Mat();
 		Mat dst_norm_scaled = new Mat();
@@ -182,19 +180,10 @@ public class FeatureExtractor {
 				}
 			}
 		}
+		return junctions;
 	}
 	
-	// Compute HLines
-	
-	void buildHLines(){
-		horizontals = new ArrayList<Integer>();
-		ArrayList<Integer> histo = horizontalHisto(number);
-		for(int i=0; i<histo.size();i++){
-	        if(histo.get(i)>0.1*histo.size()){
-	            horizontals.add(i);
-	        }
-	    }
-	}
+
 	
 	// Extract Mat Features from ArrayLists
 	
@@ -237,40 +226,24 @@ public class FeatureExtractor {
 	    }
 	}
 
-	void extractFeatures(){
-	    for(int i=0; i<curls.size();i++){
-	        int zone = localize(curls.get(i));
-	        switch(zone){
-	        case 2: features.get(0,0)[0]=1;
-	            break;
-	        case 5: features.get(0,1)[0]=1;
-	            break;
-	        case 8: features.get(0,2)[0]=1;
-	            break;
-	        }       
-	    }
+	void buildCurls(){
+		ArrayList<Point> curls= detectCurls();
+		int[] c = new int[4];
 	    if(curls.size()==2){
-	        features.get(0,3)[0]=1;
+	        c[3]=1;
 	    }
-	    for(int i=0; i<horizontals.size();i++){
-	        Point p = new Point(number.cols()/2,horizontals.get(i));
-	        int zone = localize(p);
+	    else if(curls.size()>0){
+	    	int zone = localize(curls.get(0));
 	        switch(zone){
-	        case 2: features.get(0,4)[0]=1;
+	        case 2: c[0]=1;
 	            break;
-	        case 5: features.get(0,5)[0]=1;
+	        case 5: c[1]=1;
 	            break;
-	        case 8: features.get(0,6)[0]=1;
+	        case 8: c[2]=1;
 	            break;
-	        }
+	        }      
 	    }
-	    if(horizontals.size()==2){
-	    	features.get(0,7)[0]=1;
-	    }
-	    for(int i=0; i<junctions.size();i++){
-	        int zone = localize(junctions.get(i));
-	        features.get(0,7+zone)[0]=1;
-	    }
+	   
 	}
 	
 	// Add area density in feature vector
@@ -288,14 +261,38 @@ public class FeatureExtractor {
 	}
 	
 	void buildDensity(int nb_zone){
+		ArrayList<Integer> density = new ArrayList<Integer>();
 	    for(int i=0; i<nb_zone; i++){
 	        for(int j=0; j<nb_zone;j++){
 	            Rect r = new Rect(new Point(i*number.cols()/nb_zone,j*number.rows()/nb_zone),new Point((i+1)*number.cols()/nb_zone,(j+1)*number.rows()/nb_zone));
 	            Mat submatrix = number.submat(r);
 	            int f = countPx(submatrix);
-	            features.put(0,17+nb_zone*i+j,f);
+	            density.add(f);
 	        }
 	    }
+	    features.setDensity(density);
+	}
+	
+	// Compute space between borders and numbers
+	
+	void buildAlign(int space){
+		ArrayList<Integer> align = new ArrayList<Integer>();
+		for(int i=0; i<number.rows(); i+=space){
+			int j=0;
+			while(number.get(i,j)[0]!=0 && j<number.cols()-1){
+				j++;
+			}
+			align.add(j);
+		}
+		for(int i=0; i<number.rows(); i+=space){
+			int j=number.cols()-1;
+			//Log.i("indx",String.valueOf(i)+";"+String.valueOf(j));
+			while(number.get(i,j)[0]!=0 && j>0){
+				j--;
+			}
+			align.add(j);
+		}
+		features.setAlignement(align);
 	}
 	
 	// Accessors
@@ -303,7 +300,7 @@ public class FeatureExtractor {
 		return number;
 	}
 	
-	public Mat getFeatures(){
+	public NumberFeatures getFeatures(){
 		return features;
 	}
 	

@@ -13,6 +13,7 @@ import org.opencv.core.Size;
 import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
 
+import com.sudoku.database.Database;
 import com.sudoku.objects.SudokuData.Input;
 import com.sudoku.objects.SudokuGrid;
 
@@ -22,6 +23,7 @@ import android.util.Log;
 public class GridPicture {
 
 	private Mat picture;
+	private Database database;
 	private Mat mgray;
 	private int maxPx;
 	private int minPx;
@@ -30,8 +32,9 @@ public class GridPicture {
 	private ArrayList<Rect> areas;
 	private ArrayList<Sample> samples;
 
-	public GridPicture(String filename) {
+	public GridPicture(String filename, Database db) {
 		picture = Highgui.imread(filename);
+		database =db;
 		Imgproc.resize(picture, picture, new Size(400,400));
 		mgray = new Mat();
 		hlines = new ArrayList<Integer>();
@@ -50,8 +53,9 @@ public class GridPicture {
 		buildRects();
 	}
 	
-	public GridPicture(Bitmap bmp) {
+	public GridPicture(Bitmap bmp, Database db) {
 		picture = new Mat();
+		database= db;
 		Utils.bitmapToMat(bmp, picture);
 		Imgproc.resize(picture, picture, new Size(400,400));
 		mgray = new Mat();
@@ -131,8 +135,8 @@ public class GridPicture {
 			if(s.isNumber(minPx,maxPx)){
 				int j = r/9;
 				int i = r%9;
-				Decision decision = new Decision(s);
-				grid.insertValue(i,j, decision.getDecision(), Input.ORIGINAL);
+				FeatureExtractor extract = new FeatureExtractor(s);
+				grid.insertValue(i,j, database.findValue(extract.getFeatures(),5), Input.ORIGINAL);
 				Core.rectangle(picture, areas.get(r).tl(),areas.get(r).br(), new Scalar(0,255,0),2,8,0);
 			}
 		}
