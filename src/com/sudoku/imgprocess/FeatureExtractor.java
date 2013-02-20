@@ -1,13 +1,18 @@
 package com.sudoku.imgprocess;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
 import org.opencv.core.Size;
+import org.opencv.features2d.Features2d;
+import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
 
 import com.sudoku.database.NumberFeatures;
@@ -21,10 +26,14 @@ public class FeatureExtractor {
 	public FeatureExtractor(Sample sample){
 		features = new NumberFeatures();
 		number=sample.getArea();
+		Imgproc.resize(number,number, new Size(150,150));
+		List<MatOfPoint> contours = new ArrayList<MatOfPoint>();		
+		Mat hierarchy = new Mat();
+		Imgproc.findContours(number, contours, hierarchy,Imgproc.RETR_LIST,Imgproc.CHAIN_APPROX_SIMPLE);
+		Imgproc.drawContours(number, contours,0, new Scalar(255));
 		inverse(number);
 		resizeSample(0);
-		//buildCurls();
-		Imgproc.resize(number, number, new Size(150,150));
+		Imgproc.resize(number,number, new Size(150,150));
 		buildDensity(5);
 		buildAlign(10);
 	}
