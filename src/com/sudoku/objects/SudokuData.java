@@ -60,6 +60,10 @@ public class SudokuData implements Parcelable{
 	public int getValue() {
 		return value;
 	}
+	
+	public void setValue(int k){
+		value=k;
+	}
 
 	public void setData(int value, Input type) {
 		this.value = value;

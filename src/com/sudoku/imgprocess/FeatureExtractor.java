@@ -26,14 +26,14 @@ public class FeatureExtractor {
 	public FeatureExtractor(Sample sample){
 		features = new NumberFeatures();
 		number=sample.getArea();
-		Imgproc.resize(number,number, new Size(150,150));
+		Imgproc.resize(number,number, new Size(50,50));
 		List<MatOfPoint> contours = new ArrayList<MatOfPoint>();		
 		Mat hierarchy = new Mat();
 		Imgproc.findContours(number, contours, hierarchy,Imgproc.RETR_LIST,Imgproc.CHAIN_APPROX_SIMPLE);
 		Imgproc.drawContours(number, contours,0, new Scalar(255));
 		inverse(number);
 		resizeSample(0);
-		Imgproc.resize(number,number, new Size(150,150));
+		Imgproc.resize(number,number, new Size(50,50));
 		buildDensity(5);
 		buildAlign(10);
 	}
@@ -284,7 +284,8 @@ public class FeatureExtractor {
 	
 	// Compute space between borders and numbers
 	
-	void buildAlign(int space){
+	void buildAlign(int n){
+		int space = number.rows()/n;
 		ArrayList<Integer> align = new ArrayList<Integer>();
 		for(int i=0; i<number.rows(); i+=space){
 			int j=0;

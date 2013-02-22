@@ -13,9 +13,12 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import com.sudoku.database.Database;
 import com.sudoku.imgprocess.GridPicture;
+import com.sudoku.objects.SudokuGrid;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Bitmap.Config;
 import android.os.Bundle;
 import android.util.Log;
@@ -50,8 +53,14 @@ public class TestResult extends Activity{
                     Mat m=gp.getPicture();
                     picture = Bitmap.createBitmap(m.cols(), m.rows(), Config.ARGB_8888); 
                     Utils.matToBitmap(m, picture);
-                    ImageView view = (ImageView) findViewById(R.id.img_view);
-            		view.setImageBitmap(picture);
+                    /*ImageView view = (ImageView) findViewById(R.id.img_view);
+            		view.setImageBitmap(picture);*/
+                    Intent intent = new Intent(TestResult.this,GameActivity.class);	
+     			   GridPicture gridPicture = new GridPicture(picture,db);
+     			   SudokuGrid grid = gridPicture.buildGame();
+     			   intent.putExtra("sudokuGrid", grid);
+     			   Log.i("start ac","start activity");
+     			   startActivity(intent);
                 } break;
                 default:
                 {

@@ -21,7 +21,11 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 public class GameActivity extends Activity{
@@ -29,7 +33,11 @@ public class GameActivity extends Activity{
 	private final static String TAG = "Game";
 
 	private SudokuGrid grid;
+	private SudokuGrid gridSolve;
 	private GridView gridView;
+	
+	private FrameLayout mainLayout;
+	private LinearLayout buttonLayout;
     
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -38,13 +46,30 @@ public class GameActivity extends Activity{
 		if(intent!=null){
 			grid = intent.getParcelableExtra("sudokuGrid");
 			if(grid!=null){
+				gridSolve = new SudokuGrid(grid);
+				gridSolve.remplir();
 				gridView = new GridView(this);
 			}
 			else{
 				Log.e("gridpicture","no data to load");
 			}
 		}
-		setContentView(gridView);
+		gridView.setPadding(0, 50, 0, 0);
+		mainLayout = new FrameLayout(this);
+        buttonLayout = new LinearLayout(this);
+        
+        Button check = new Button(this);
+        check.setText("check");
+        Button solve= new Button(this);
+        solve.setText("solve");
+        
+        buttonLayout.addView(check);
+        buttonLayout.addView(solve);
+        
+        mainLayout.addView(gridView);
+        mainLayout.addView(buttonLayout);
+        
+		setContentView(mainLayout);
 		gridView.requestFocus();
 	}
 	

@@ -107,11 +107,11 @@ public class GridPicture {
 	}
 	
 	void buildRects(){
-		int blank = 5;
+		int blank = 6;
 		for(int c=0; c<vlines.size()-1;c++){
 			for(int r=0; r<hlines.size()-1;r++){
 				Point p1 = new Point(hlines.get(r)+blank, vlines.get(c)+blank);
-				Point p2= new Point(hlines.get(r+1)-blank+2, vlines.get(c+1)-blank+2);
+				Point p2= new Point(hlines.get(r+1)-blank+3, vlines.get(c+1)-blank+3);
 				Rect rec = new Rect(p1,p2);
 				Mat m = picture.submat(rec);
 				Sample s = new Sample(m);
@@ -152,7 +152,7 @@ public class GridPicture {
 		Mat extracted = new Mat();
 		//Imgproc.Canny(mgray, extracted, 30, 75);
 		Mat accu = houghAccumulation(mgray, picture.rows(), picture.cols());
-		buildLines(picture, 105, accu);
+		buildLines(picture, 75, accu);
 	}
 
 	Mat houghAccumulation(Mat contour, int r, int c) {
@@ -173,7 +173,7 @@ public class GridPicture {
 		return accu;
 	}
 
-	void addLine(int rho, ArrayList<Integer> lines) {
+	boolean addLine(int rho, ArrayList<Integer> lines) {
 		int threshold = 10; //10
 		if (lines.size() == 0) {
 			lines.add(rho);
@@ -189,8 +189,10 @@ public class GridPicture {
 			if (rho - lines.get(previousIndex) > threshold) {
 				lines.add(previousIndex + 1, rho);
 				//Log.i("indx",String.valueOf(rho));
+				return true;
 			}
 		}
+		return false;
 	}
 
 	void buildLines(Mat img, int seuil, Mat accu) {
@@ -202,13 +204,15 @@ public class GridPicture {
 					if (j == 0) { // horizontal line
 						p1 = new Point(rho, 0);
 						p2 = new Point(rho, img.rows());
-						//Core.line(picture,p1,p2,new Scalar(0,255,0));
-						addLine(rho, hlines);
+						if(addLine(rho, hlines)){
+							//Core.line(picture,p1,p2,new Scalar(0,255,0));
+						}
 					} else if (j == 4) { // vertical line
 						p1 = new Point(0, rho);
 						p2 = new Point(img.cols(), rho);
-						//Core.line(picture,p1,p2,new Scalar(0,255,0));
-						addLine(rho, vlines);
+						if(addLine(rho, vlines)){
+							//Core.line(picture,p1,p2,new Scalar(0,255,0));
+						}
 					}
 					
 					 /*else { 
