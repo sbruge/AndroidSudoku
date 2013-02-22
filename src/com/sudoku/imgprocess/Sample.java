@@ -8,25 +8,30 @@ import android.util.Log;
 
 public class Sample {
 	
+	private Mat contours;
 	private Mat area;
 
 	public Sample(Mat sample) {
-		super();
-		area = new Mat();
-		Imgproc.cvtColor(sample, area, Imgproc.COLOR_RGB2GRAY);
-		Imgproc.GaussianBlur(area, area,new Size(3,3), 1.6);
-		Imgproc.Canny(area, area,10,150);
+		area = sample.clone();
+		contours = new Mat();
+		Imgproc.cvtColor(sample, contours, Imgproc.COLOR_RGB2GRAY);
+		Imgproc.GaussianBlur(contours, contours,new Size(3,3), 1.6);
+		Imgproc.Canny(contours, contours,10,150);
 	}
 
-	public Mat getArea() {
+	public Mat getcontours() {
+		return contours;
+	}
+	
+	public Mat getArea(){
 		return area;
 	}
 	
 	public int countPx(){
 		int nbOfBlackPxl = 0;
-		for(int i=5; i<area.cols();i++){
-			for(int j=5; j<area.rows();j++){
-				if(area.get(j, i)[0]==255){
+		for(int i=5; i<contours.cols();i++){
+			for(int j=5; j<contours.rows();j++){
+				if(contours.get(j, i)[0]==255){
 					nbOfBlackPxl++;
 				}
 			}

@@ -26,12 +26,9 @@ public class FeatureExtractor {
 	public FeatureExtractor(Sample sample){
 		features = new NumberFeatures();
 		number=sample.getArea();
+		Imgproc.cvtColor(number,number, Imgproc.COLOR_RGB2GRAY);
 		Imgproc.resize(number,number, new Size(50,50));
-		List<MatOfPoint> contours = new ArrayList<MatOfPoint>();		
-		Mat hierarchy = new Mat();
-		Imgproc.findContours(number, contours, hierarchy,Imgproc.RETR_LIST,Imgproc.CHAIN_APPROX_SIMPLE);
-		Imgproc.drawContours(number, contours,0, new Scalar(255));
-		inverse(number);
+		Imgproc.threshold(number, number, 0, 255, Imgproc.THRESH_OTSU);
 		resizeSample(0);
 		Imgproc.resize(number,number, new Size(50,50));
 		buildDensity(5);
