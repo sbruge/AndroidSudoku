@@ -1,13 +1,42 @@
 package com.sudoku.androidview;
 
+import java.io.IOException;
+import java.io.InputStream;
+
+import org.opencv.android.BaseLoaderCallback;
+import org.opencv.android.LoaderCallbackInterface;
+import org.opencv.android.OpenCVLoader;
+import org.xmlpull.v1.XmlPullParserException;
+
+import com.sudoku.database.Database;
+import com.sudoku.imgprocess.GridPicture;
+import com.sudoku.objects.SudokuGrid;
+
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 
 public class SudokuMainActivity extends Activity implements OnClickListener{
+	
+	private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
+        @Override
+        public void onManagerConnected(int status) {
+            switch (status) {
+                case LoaderCallbackInterface.SUCCESS:
+                {
+                    Log.i("loading opCV", "OpenCV loaded successfully");
+                } break;
+                default:
+                {
+                    super.onManagerConnected(status);
+                } break;
+            }
+        }
+    };
 	
 
 	@Override
@@ -36,6 +65,11 @@ public class SudokuMainActivity extends Activity implements OnClickListener{
 		return true;
 	}
 
+	@Override
+	protected void onResume() {
+		super.onResume();
+		OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_3, this, mLoaderCallback);
+	}
 
 	@Override
 	public void onClick(View v) {
@@ -45,7 +79,23 @@ public class SudokuMainActivity extends Activity implements OnClickListener{
 				startActivity(in_import);
 				break;
 			case R.id.continue_button:
-				Intent in_continue = new Intent(this,TestResult.class);
+				Database db = new Database();
+                try {
+					InputStream is = getAssets().open("database.xml");
+					try {
+						db.loadXmlDb(is);
+					} catch (XmlPullParserException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				 GridPicture gp = new GridPicture("/mnt/sdcard/perspective.jpg",db);
+                 SudokuGrid grid = gp.buildGame();
+				Intent in_continue = new Intent(this,GameActivity.class);
+				in_continue.putExtra("sudokuGrid", grid);
 				startActivity(in_continue);
 				break;
 			case R.id.about_button:

@@ -21,6 +21,9 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -36,8 +39,6 @@ public class GameActivity extends Activity{
 	private SudokuGrid gridSolve;
 	private GridView gridView;
 	
-	private FrameLayout mainLayout;
-	private LinearLayout buttonLayout;
     
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -55,24 +56,22 @@ public class GameActivity extends Activity{
 			}
 		}
 		gridView.setPadding(0, 50, 0, 0);
-		mainLayout = new FrameLayout(this);
-        buttonLayout = new LinearLayout(this);
-        
-        Button check = new Button(this);
-        check.setText("check");
-        Button solve= new Button(this);
-        solve.setText("solve");
-        
-        //buttonLayout.addView(check);
-        //buttonLayout.addView(solve);
-        
-        mainLayout.addView(gridView);
-        mainLayout.addView(buttonLayout);
-        
-		setContentView(mainLayout);
+     
+		setContentView(R.layout.game);
 		gridView.requestFocus();
 	}
 	
+	
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.game_activity, menu);
+		return true;
+	}
+
+
+
 	SudokuGrid getGrid(){
 		return grid;
 	}

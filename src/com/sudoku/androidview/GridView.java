@@ -9,6 +9,7 @@ import android.graphics.Paint;
 import android.graphics.Paint.FontMetrics;
 import android.graphics.Paint.Style;
 import android.graphics.Rect;
+import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -28,6 +29,17 @@ public class GridView extends View {
 		setFocusableInTouchMode(true);
 	}
 	
+	
+	
+	public GridView(Context context, AttributeSet attrs) {
+		super(context, attrs);
+		this.game = (GameActivity) context;
+		setFocusable(true);
+		setFocusableInTouchMode(true);
+	}
+
+
+
 	GameActivity getGame(){
 		return game;
 	}
@@ -39,6 +51,8 @@ public class GridView extends View {
 	int getRow(){
 		return Y;
 	}
+	
+	
 
 	@Override
 	protected void onSizeChanged(int w, int h, int oldw, int oldh) {

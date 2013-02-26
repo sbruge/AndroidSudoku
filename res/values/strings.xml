@@ -26,5 +26,7 @@ row, each column, and each of the 3x3 boxes
     <string name="game_title">Game</string>
     <string name="keypad_title">Select a number</string>
     
+    <string name="take_picture_label">Take picture</string>
+    
 
 </resources>

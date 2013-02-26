@@ -81,7 +81,7 @@ public class GridPicture {
 			buildRects();
 		}
 		else{
-			Log.i("sudogrid","error in grid:"+String.valueOf(hlines.size())+";"+String.valueOf(vlines.size()));
+			Log.e("sudogrid","error in grid:"+String.valueOf(hlines.size())+";"+String.valueOf(vlines.size()));
 		}
 	}
 
