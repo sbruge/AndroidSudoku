@@ -40,17 +40,6 @@
 							</tool>
 						</toolChain>
 					</folderInfo>
-					<fileInfo id="0.1465500151.913685239" name="jni_part.cpp" rcbsApplicability="disable" resourcePath="jni/jni_part.cpp" toolsToInvoke="org.eclipse.cdt.build.core.settings.holder.571735757.1260175">
-						<tool id="org.eclipse.cdt.build.core.settings.holder.571735757.1260175" name="GNU C++" superClass="org.eclipse.cdt.build.core.settings.holder.670063186">
-							<option id="org.eclipse.cdt.build.core.settings.holder.incpaths.1979882160" name="Include Paths" superClass="org.eclipse.cdt.build.core.settings.holder.incpaths" valueType="includePath">
-								<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../sdk/native/jni/include&quot;"/>
-								<listOptionValue builtIn="false" value="/opt/android-ndk-r8d/platforms/android-9/arch-arm/usr/include"/>
-								<listOptionValue builtIn="false" value="/opt/android-ndk-r8d/sources/cxx-stl/gnu-libstdc++/4.7/include"/>
-								<listOptionValue builtIn="false" value="/opt/android-ndk-r8d/sources/cxx-stl/gnu-libstdc++/4.7/libs/armeabi-v7a/include"/>
-							</option>
-							<inputType id="org.eclipse.cdt.build.core.settings.holder.inType.851390986" languageId="org.eclipse.cdt.core.g++" languageName="GNU C++" sourceContentType="org.eclipse.cdt.core.cxxSource,org.eclipse.cdt.core.cxxHeader" superClass="org.eclipse.cdt.build.core.settings.holder.inType"/>
-						</tool>
-					</fileInfo>
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>

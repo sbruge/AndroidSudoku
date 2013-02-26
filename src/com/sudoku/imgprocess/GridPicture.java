@@ -109,15 +109,13 @@ public class GridPicture {
 		return k;
 	}
 	
+	
+	
 	void buildRects(){
-		int blank = 3;
-		int deltaX = picture.cols()/9;
-		int deltaY= picture.rows()/9;
-		for(int c=0; c<9;c++){
-			for(int r=0; r<9;r++){
-				Point p1 = new Point(r*deltaY+blank+2, c*deltaX+blank+2);
-				Point p2= new Point((r+1)*deltaY-blank,  (c+1)*deltaX-blank);
-				Rect rec = new Rect(p1,p2);
+		for(int r=0; r<9;r++){
+			for(int c=0; c<9;c++){
+				int bk =5;
+				Rect rec = new Rect(new Point(c*picture.cols()/9+bk+3, r*picture.rows()/9+bk),new Point((c+1)*picture.cols()/9-bk, (r+1)*picture.rows()/9-bk));
 				Mat m = picture.submat(rec);
 				Sample s = new Sample(m);
 				int count = s.countPx();
@@ -138,11 +136,12 @@ public class GridPicture {
 		for(int r=0; r<samples.size();r++){
 			Sample s = samples.get(r);
 			if(s.isNumber(minPx,maxPx)){
+				//s.adjustRoi();
 				int j = r/9;
 				int i = r%9;
 				FeatureExtractor extract = new FeatureExtractor(s);
 				grid.insertValue(i,j, database.findValue(extract.getFeatures(),5), Input.ORIGINAL);
-				Core.rectangle(picture, areas.get(r).tl(),areas.get(r).br(), new Scalar(0,255,0),2,8,0);
+				Core.rectangle(picture, areas.get(r).tl(),areas.get(r).br(), new Scalar(0,255,0),1,8,0);
 			}
 		}
 		return grid;
@@ -162,7 +161,7 @@ public class GridPicture {
 
 	
 	void splitLines(Mat lines){
-		// Séparation des verticales et horizontales
+		// Sï¿½paration des verticales et horizontales
 		for(int k=0; k<lines.cols();k++){
 			double[] data = lines.get(0,k);
 			double rho = data[0];

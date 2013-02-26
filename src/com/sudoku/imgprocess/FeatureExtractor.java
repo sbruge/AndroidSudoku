@@ -26,9 +26,9 @@ public class FeatureExtractor {
 	public FeatureExtractor(Sample sample){
 		features = new NumberFeatures();
 		number=sample.getArea();
-		Imgproc.cvtColor(number,number, Imgproc.COLOR_RGB2GRAY);
+		//Imgproc.cvtColor(number,number, Imgproc.COLOR_RGB2GRAY);
 		Imgproc.resize(number,number, new Size(50,50));
-		Imgproc.threshold(number, number, 0, 255, Imgproc.THRESH_OTSU);
+		//Imgproc.threshold(number, number, 0, 255, Imgproc.THRESH_OTSU);
 		resizeSample(0);
 		Imgproc.resize(number,number, new Size(50,50));
 		buildDensity(5);
