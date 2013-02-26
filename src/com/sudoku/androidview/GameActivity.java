@@ -63,8 +63,8 @@ public class GameActivity extends Activity{
         Button solve= new Button(this);
         solve.setText("solve");
         
-        buttonLayout.addView(check);
-        buttonLayout.addView(solve);
+        //buttonLayout.addView(check);
+        //buttonLayout.addView(solve);
         
         mainLayout.addView(gridView);
         mainLayout.addView(buttonLayout);

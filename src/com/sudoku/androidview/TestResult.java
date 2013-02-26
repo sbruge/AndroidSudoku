@@ -48,17 +48,21 @@ public class TestResult extends Activity{
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
+                    
+                    // View Img
                     GridPicture gp = new GridPicture("/mnt/sdcard/perspective.jpg",db);
-                    gp.buildGame();
+                    SudokuGrid grid = gp.buildGame();
                     Mat m=gp.getPicture();
                     picture = Bitmap.createBitmap(m.cols(), m.rows(), Config.ARGB_8888); 
                     Utils.matToBitmap(m, picture);
                     ImageView view = (ImageView) findViewById(R.id.img_view);
             		view.setImageBitmap(picture);
+            		
+            		//Numerise
                     /*Intent intent = new Intent(TestResult.this,GameActivity.class);	
      			   GridPicture gridPicture = new GridPicture(picture,db);
-     			   SudokuGrid grid = gridPicture.buildGame();
-     			   intent.putExtra("sudokuGrid", grid);
+     			   SudokuGrid grid2 = gridPicture.buildGame();
+     			   intent.putExtra("sudokuGrid", grid2);
      			   Log.i("start ac","start activity");
      			   startActivity(intent);*/
                 } break;

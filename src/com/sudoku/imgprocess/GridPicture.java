@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import org.opencv.android.Utils;
+import org.opencv.calib3d.Calib3d;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -13,8 +14,10 @@ import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.utils.Converters;
 
 import com.sudoku.database.Database;
+import com.sudoku.imgprocess.Line.Orientation;
 import com.sudoku.objects.SudokuData.Input;
 import com.sudoku.objects.SudokuGrid;
 
@@ -46,9 +49,14 @@ public class GridPicture {
 		minPx=0;
 		Imgproc.cvtColor(picture, mgray, Imgproc.COLOR_BGR2GRAY);
 		Imgproc.Canny(mgray, mgray, 25,150);
-		extractAreas();
-		Log.e("sudogrid","error in grid:"+String.valueOf(hlines.size())+";"+String.valueOf(vlines.size()));
-		//buildRects();
+		reshape();
+		if(isValidGrid()){
+			Log.i("sudogrid", "valid grid!");
+			buildRects();
+		}
+		else{
+			Log.e("sudogrid","error in grid:"+String.valueOf(hlines.size())+";"+String.valueOf(vlines.size()));
+		}		
 	}
 	
 	public GridPicture(Bitmap bmp, Database db) {
@@ -66,11 +74,11 @@ public class GridPicture {
 		Imgproc.cvtColor(picture, mgray, Imgproc.COLOR_BGR2GRAY);
 		Log.i("sudoGrid","start extract");
 		Imgproc.cvtColor(picture, mgray, Imgproc.COLOR_BGR2GRAY);
-		Imgproc.Canny(mgray, mgray, 10,150);
-		extractAreas();
+		Imgproc.Canny(mgray, mgray, 10,130);
+		reshape();
 		if(isValidGrid()){
 			Log.i("sudogrid", "valid grid!");
-			//buildRects();
+			buildRects();
 		}
 		else{
 			Log.i("sudogrid","error in grid:"+String.valueOf(hlines.size())+";"+String.valueOf(vlines.size()));
@@ -101,12 +109,14 @@ public class GridPicture {
 		return k;
 	}
 	
-	/*void buildRects(){
-		int blank = 6;
-		for(int c=0; c<vlines.size()-1;c++){
-			for(int r=0; r<hlines.size()-1;r++){
-				Point p1 = new Point(hlines.get(r)+blank, vlines.get(c)+blank);
-				Point p2= new Point(hlines.get(r+1)-blank+3, vlines.get(c+1)-blank+3);
+	void buildRects(){
+		int blank = 3;
+		int deltaX = picture.cols()/9;
+		int deltaY= picture.rows()/9;
+		for(int c=0; c<9;c++){
+			for(int r=0; r<9;r++){
+				Point p1 = new Point(r*deltaY+blank+2, c*deltaX+blank+2);
+				Point p2= new Point((r+1)*deltaY-blank,  (c+1)*deltaX-blank);
 				Rect rec = new Rect(p1,p2);
 				Mat m = picture.submat(rec);
 				Sample s = new Sample(m);
@@ -121,7 +131,7 @@ public class GridPicture {
 				samples.add(s);
 			}
 		}
-	}*/
+	}
 
 	public SudokuGrid buildGame() {
 		SudokuGrid grid = new SudokuGrid();
@@ -142,14 +152,14 @@ public class GridPicture {
 	public Mat viewSample(int i, int j){
 		return picture.submat(areas.get(9*i+j%9));
 	}
-
-	void extractAreas() {
-		//Mat accu = houghAccumulation(mgray, picture.rows(), picture.cols());
+	
+	void reshape(){
 		Mat lines = new Mat();
 		Imgproc.HoughLines(mgray, lines, 1, Math.PI/180, 130);
 		splitLines(lines);
-		//buildLines(picture, 95, accu);
+		adjustPerspective();
 	}
+
 	
 	void splitLines(Mat lines){
 		// Séparation des verticales et horizontales
@@ -165,9 +175,9 @@ public class GridPicture {
 			}
 		}
 		Collections.sort(vlines);
-		removeLines(vlines);
+		removeLines(vlines,Orientation.VERTICAL);
 		Collections.sort(hlines);
-		removeLines(hlines);
+		removeLines(hlines,Orientation.HORIZONTAL);
 		for(int i=0; i<vlines.size();i++){
 			vlines.get(i).drawOn(picture);
 		}
@@ -176,24 +186,59 @@ public class GridPicture {
 		}
 	}
 	
-	void removeLines(ArrayList<Line> lines){
-		double dprec=lines.get(0).getDistance();
-		Log.i("size",String.valueOf(lines.size()));
-		for(int i=1;i<lines.size();i++){
-			Line l = lines.get(i);
-			double d = l.getDistance();
-			if(l.getDistance()-dprec<=90){
-				Log.e("remove",String.valueOf(d));
-				lines.remove(i);
-				
+	void adjustPerspective(){
+		Point p1 = vlines.get(0).intersection(hlines.get(0));
+		Point p2 = vlines.get(vlines.size()-1).intersection(hlines.get(0));
+		Point p3 = vlines.get(vlines.size()-1).intersection(hlines.get(hlines.size()-1));
+		Point p4 = vlines.get(0).intersection(hlines.get(hlines.size()-1));
+		
+		ArrayList<Point> src_pts = new ArrayList<Point>();
+		ArrayList<Point> dst_pts = new ArrayList<Point>();
+		src_pts.add(p1);
+		src_pts.add(p2);
+		src_pts.add(p3);
+		src_pts.add(p4);
+		
+		dst_pts.add(new Point(0,0));
+		dst_pts.add(new Point(400,0));
+		dst_pts.add(new Point(400,400));
+		dst_pts.add(new Point(0,400));
+		Mat src= new Mat();
+		src=Converters.vector_Point2f_to_Mat(src_pts);
+		Mat dst=new Mat();
+		dst=Converters.vector_Point2f_to_Mat(dst_pts);
+		Mat H = Imgproc.getPerspectiveTransform(src, dst);
+		Imgproc.warpPerspective(picture, picture, H, picture.size());
+	}
+	
+	void removeLines(ArrayList<Line> lines, Line.Orientation orientation){
+		ArrayList<Line> newLines = new ArrayList<Line>();
+		newLines.add(lines.get(0));
+		if(orientation == Orientation.VERTICAL){
+			Line l = new Line(picture.rows()/2,Math.PI/2,Orientation.HORIZONTAL);
+			double x = l.intersection(lines.get(0)).x;
+			for(int i=1; i<lines.size();i++){
+				Point p = l.intersection(lines.get(i));
+				if(p.x-x>10){
+					newLines.add(lines.get(i));
+					x=p.x;
+				}
 			}
-			else{
-				Log.i("keep",String.valueOf(d));
-				dprec = l.getDistance();
-			}
-				
+			vlines = newLines;
 		}
-		Log.i("size",String.valueOf(lines.size()));
+		else{
+			Line l = new Line(picture.cols()/2,0,Orientation.VERTICAL);
+			l.drawOn(picture);
+			double y = l.intersection(lines.get(0)).y;
+			for(int i=1; i<lines.size();i++){
+				Point p = l.intersection(lines.get(i));
+				if(p.y-y>10){
+					newLines.add(lines.get(i));
+					y=p.y;
+				}
+			}
+			hlines = newLines;
+		}
 	}
 
 	Mat houghAccumulation(Mat contour, int r, int c) {

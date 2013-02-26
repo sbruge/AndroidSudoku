@@ -56,6 +56,36 @@ public class Line implements Comparable<Line> {
 		}
 	}
 	
+	public Point intersection(Line l){
+		Point p = new Point();
+		if(l.getOrientation() == orientation){
+			return p;
+		}
+		else{
+			if(theta!=0){
+				double a = -Math.cos(theta)/Math.sin(theta);
+				double b = rho/Math.sin(theta);
+				if(l.getTheta()!=0){
+					double al = -Math.cos(l.getTheta())/Math.sin(l.getTheta());
+					double bl = l.getRho()/Math.sin(l.getTheta());
+					p.x = (bl-b)/(a-al);
+					p.y = a*p.x+b;
+				}
+				else{
+					p.x= l.getRho();
+					p.y= a*p.x+b;
+				}
+			}
+			else{
+				double al = -Math.cos(l.getTheta())/Math.sin(l.getTheta());
+				double bl = l.getRho()/Math.sin(l.getTheta());
+				p.x= rho;
+				p.y= al*p.x+bl;
+			}
+			return p;
+		}
+	}
+	
 
 	@Override
 	public boolean equals(Object o) {
@@ -89,12 +119,6 @@ public class Line implements Comparable<Line> {
 				return 0;
 			}
 		}
-		/*if(rho < l.getRho()){
-			return -1;
-		}
-		else{
-			return 0;
-		}*/
 	}
 	
 }
