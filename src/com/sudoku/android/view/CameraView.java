@@ -1,4 +1,4 @@
-package com.sudoku.androidview;
+package com.sudoku.android.view;
 
 
 import java.io.IOException;
@@ -32,7 +32,7 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback{
 		return mCamera;
 	}
 	
-	byte[] getDataStored(){
+	public byte[] getDataStored(){
 		return dataStored;
 	}
 	

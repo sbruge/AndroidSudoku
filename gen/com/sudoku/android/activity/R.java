@@ -5,7 +5,7 @@
  * should not be modified by hand.
  */
 
-package com.sudoku.androidview;
+package com.sudoku.android.activity;
 
 public final class R {
     public static final class attr {
@@ -27,6 +27,25 @@ containing a value of this type.
 </table>
          */
         public static final int camera_id=0x7f010001;
+        /** <p>Must be one of the following constant values.</p>
+<table>
+<colgroup align="left" />
+<colgroup align="left" />
+<colgroup align="left" />
+<tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td><code>left</code></td><td>0</td><td></td></tr>
+<tr><td><code>right</code></td><td>1</td><td></td></tr>
+</table>
+         */
+        public static final int labelPosition=0x7f010003;
+        /** <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int showText=0x7f010002;
         /** <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
 <p>This may also be a reference to a resource (in the form
 "<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
@@ -40,52 +59,56 @@ containing a value of this type.
         /**  Menu 
          */
         public static final int background=0x7f050000;
+        public static final int false_entry=0x7f050007;
         public static final int major_line=0x7f050003;
         public static final int minor_line=0x7f050002;
         public static final int origin_numbers=0x7f050004;
-        public static final int selected_tile=0x7f050006;
+        public static final int selected_tile=0x7f050008;
         /**  Game 
          */
         public static final int tile_background=0x7f050001;
         public static final int userinput_numbers=0x7f050005;
+        public static final int valid_entry=0x7f050006;
     }
     public static final class drawable {
         public static final int ic_launcher=0x7f020000;
     }
     public static final class id {
-        public static final int about_button=0x7f040006;
-        public static final int about_content=0x7f040003;
+        public static final int about_button=0x7f040008;
+        public static final int about_content=0x7f040005;
         public static final int any=0x7f040000;
         public static final int back=0x7f040001;
-        public static final int continue_button=0x7f040005;
-        public static final int exit_button=0x7f040007;
+        public static final int check=0x7f040017;
+        public static final int continue_button=0x7f040007;
+        public static final int correct=0x7f040018;
+        public static final int exit_button=0x7f040009;
         public static final int front=0x7f040002;
-        public static final int grid_view=0x7f040008;
-        public static final int img_view=0x7f040014;
-        public static final int import_button=0x7f040004;
-        public static final int key_1=0x7f04000a;
-        public static final int key_2=0x7f04000b;
-        public static final int key_3=0x7f04000c;
-        public static final int key_4=0x7f04000d;
-        public static final int key_5=0x7f04000e;
-        public static final int key_6=0x7f04000f;
-        public static final int key_7=0x7f040010;
-        public static final int key_8=0x7f040011;
-        public static final int key_9=0x7f040012;
-        public static final int key_clear=0x7f040013;
-        public static final int keypad=0x7f040009;
-        public static final int menu_settings=0x7f040015;
+        public static final int img_view=0x7f040015;
+        public static final int import_button=0x7f040006;
+        public static final int key_1=0x7f04000b;
+        public static final int key_2=0x7f04000c;
+        public static final int key_3=0x7f04000d;
+        public static final int key_4=0x7f04000e;
+        public static final int key_5=0x7f04000f;
+        public static final int key_6=0x7f040010;
+        public static final int key_7=0x7f040011;
+        public static final int key_8=0x7f040012;
+        public static final int key_9=0x7f040013;
+        public static final int key_clear=0x7f040014;
+        public static final int keypad=0x7f04000a;
+        public static final int left=0x7f040003;
+        public static final int menu_settings=0x7f040016;
+        public static final int right=0x7f040004;
     }
     public static final class layout {
         public static final int about=0x7f030000;
         public static final int activity_sudoku_main=0x7f030001;
-        public static final int game=0x7f030002;
-        public static final int import_grid=0x7f030003;
-        public static final int keypad=0x7f030004;
-        public static final int test=0x7f030005;
+        public static final int keypad=0x7f030002;
+        public static final int test=0x7f030003;
     }
     public static final class menu {
         public static final int activity_sudoku_main=0x7f080000;
+        public static final int game_activity=0x7f080001;
     }
     public static final class string {
         public static final int about_content=0x7f060009;
@@ -108,6 +131,7 @@ containing a value of this type.
         /**  Menu 
          */
         public static final int menu_settings=0x7f060002;
+        public static final int take_picture_label=0x7f06000c;
     }
     public static final class style {
         /** 
@@ -144,8 +168,8 @@ containing a value of this type.
            <colgroup align="left" />
            <colgroup align="left" />
            <tr><th>Attribute</th><th>Description</th></tr>
-           <tr><td><code>{@link #CameraBridgeViewBase_camera_id com.sudoku.androidview:camera_id}</code></td><td></td></tr>
-           <tr><td><code>{@link #CameraBridgeViewBase_show_fps com.sudoku.androidview:show_fps}</code></td><td></td></tr>
+           <tr><td><code>{@link #CameraBridgeViewBase_camera_id com.sudoku.android.activity:camera_id}</code></td><td></td></tr>
+           <tr><td><code>{@link #CameraBridgeViewBase_show_fps com.sudoku.android.activity:show_fps}</code></td><td></td></tr>
            </table>
            @see #CameraBridgeViewBase_camera_id
            @see #CameraBridgeViewBase_show_fps
@@ -154,7 +178,7 @@ containing a value of this type.
             0x7f010000, 0x7f010001
         };
         /**
-          <p>This symbol is the offset where the {@link com.sudoku.androidview.R.attr#camera_id}
+          <p>This symbol is the offset where the {@link com.sudoku.android.activity.R.attr#camera_id}
           attribute's value can be found in the {@link #CameraBridgeViewBase} array.
 
 
@@ -178,7 +202,7 @@ containing a value of this type.
         */
         public static final int CameraBridgeViewBase_camera_id = 1;
         /**
-          <p>This symbol is the offset where the {@link com.sudoku.androidview.R.attr#show_fps}
+          <p>This symbol is the offset where the {@link com.sudoku.android.activity.R.attr#show_fps}
           attribute's value can be found in the {@link #CameraBridgeViewBase} array.
 
 
@@ -191,5 +215,51 @@ containing a value of this type.
           @attr name android:show_fps
         */
         public static final int CameraBridgeViewBase_show_fps = 0;
+        /** Attributes that can be used with a GridView.
+           <p>Includes the following attributes:</p>
+           <table>
+           <colgroup align="left" />
+           <colgroup align="left" />
+           <tr><th>Attribute</th><th>Description</th></tr>
+           <tr><td><code>{@link #GridView_labelPosition com.sudoku.android.activity:labelPosition}</code></td><td></td></tr>
+           <tr><td><code>{@link #GridView_showText com.sudoku.android.activity:showText}</code></td><td></td></tr>
+           </table>
+           @see #GridView_labelPosition
+           @see #GridView_showText
+         */
+        public static final int[] GridView = {
+            0x7f010002, 0x7f010003
+        };
+        /**
+          <p>This symbol is the offset where the {@link com.sudoku.android.activity.R.attr#labelPosition}
+          attribute's value can be found in the {@link #GridView} array.
+
+
+          <p>Must be one of the following constant values.</p>
+<table>
+<colgroup align="left" />
+<colgroup align="left" />
+<colgroup align="left" />
+<tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td><code>left</code></td><td>0</td><td></td></tr>
+<tr><td><code>right</code></td><td>1</td><td></td></tr>
+</table>
+          @attr name android:labelPosition
+        */
+        public static final int GridView_labelPosition = 1;
+        /**
+          <p>This symbol is the offset where the {@link com.sudoku.android.activity.R.attr#showText}
+          attribute's value can be found in the {@link #GridView} array.
+
+
+          <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name android:showText
+        */
+        public static final int GridView_showText = 0;
     };
 }

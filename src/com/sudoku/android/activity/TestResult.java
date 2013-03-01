@@ -1,4 +1,4 @@
-package com.sudoku.androidview;
+package com.sudoku.android.activity;
 
 import java.io.IOException;
 import java.io.InputStream;

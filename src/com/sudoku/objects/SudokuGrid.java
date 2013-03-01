@@ -1,5 +1,7 @@
 package com.sudoku.objects;
 
+import java.util.ArrayList;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
@@ -24,7 +26,13 @@ public class SudokuGrid implements Parcelable{
 	}
 	
 	public SudokuGrid(SudokuGrid sudoku){
-		grid = sudoku.getGrid();
+		grid = new SudokuData[9][9];
+		for(int i=0; i<9; i++){
+			for(int j=0; j<9; j++){
+				SudokuData data = sudoku.getGrid()[i][j];
+				grid[i][j] = new SudokuData(data.getDataType(),data.getValue());
+			}
+		}
 	}
 	
 	public SudokuGrid(Parcel in) {
@@ -102,11 +110,13 @@ public class SudokuGrid implements Parcelable{
 
     
     private boolean carrePossible(int i,int j,int v) {
-    	int coinI = (i/9) * 9;
-    	int coinJ = (j/9) * 9;
-    	for (int i1=0;i1<9;i1++)
-    		for (int j1=0;j1<9;j1++)
-    			if (grid[coinI+i1][coinJ+j1].getValue()==v) return false;
+    	int coinI = (i/3) * 3;
+    	int coinJ = (j/3) * 3;
+    	for (int i1=0;i1<3;i1++)
+    		for (int j1=0;j1<3;j1++)
+    			if (grid[coinI+i1][coinJ+j1].getValue()==v){
+    				return false;
+    			}
     	return true;
     }
 
@@ -118,25 +128,24 @@ public class SudokuGrid implements Parcelable{
     }
            
     private boolean placer(int i, int j) {
-        // cas d'arrêt
-        // on a dépassé la dernière ligne donc la grille est remplie
-        if (i==9) 
-           return true;
 
-        // cas général
-        // Sous-cas 1 : la case contient déjà une valeur
+        if (i==9){
+        	Log.i("rempli","Finish with sucess!!");
+           return true;
+        }
+
         if (grid[i][j].getValue()!=0){
         	return placer(ligneSuivante(i,j),colonneSuivante(i,j));
         }
        
-        // Sous-cas 2 : la case est vide
         int k=1;
-        boolean possible = false;
-        while (!possible && k<=9) {
 
-        	if(lignePossible(i,k) && colonnePossible(j,k)&& carrePossible(i,j,k)){
+        boolean possible = false;
+        while (possible==false && k<=9) {
+        	//
+        	if(lignePossible(i,k)==true && colonnePossible(j,k)==true && carrePossible(i,j,k)==true){
         		grid[i][j].setValue(k);
-        		if(placer(ligneSuivante(i,j),colonneSuivante(i,j))){
+        		if(placer(ligneSuivante(i,j),colonneSuivante(i,j))==true){
         			return true;
         		}
         		else{
@@ -150,6 +159,18 @@ public class SudokuGrid implements Parcelable{
 	}
 	return false;
   }
+    
+    // Help tools for user
+    
+    ArrayList<Integer> getPossibilities(int i, int j){
+    	ArrayList<Integer> p = new ArrayList<Integer>();
+    	for(int v=1;v<=9;v++){
+    		if(lignePossible(i, v) && colonnePossible(j, v) && carrePossible(i, j, v)){
+    			p.add(v);
+    		}
+    	}
+    	return p;
+    }
 	
 	
 	// Parcelable Override methods

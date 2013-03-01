@@ -1,4 +1,5 @@
-package com.sudoku.androidview;
+package com.sudoku.android.activity;
+
 
 import android.app.Activity;
 import android.os.Bundle;

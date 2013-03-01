@@ -137,8 +137,8 @@ public class GridPicture {
 			Sample s = samples.get(r);
 			if(s.isNumber(minPx,maxPx)){
 				//s.adjustRoi();
-				int j = r/9;
-				int i = r%9;
+				int i = r/9;
+				int j = r%9;
 				FeatureExtractor extract = new FeatureExtractor(s);
 				grid.insertValue(i,j, database.findValue(extract.getFeatures(),5), Input.ORIGINAL);
 				Core.rectangle(picture, areas.get(r).tl(),areas.get(r).br(), new Scalar(0,255,0),1,8,0);
