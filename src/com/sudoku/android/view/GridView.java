@@ -1,5 +1,7 @@
 package com.sudoku.android.view;
 
+import java.util.ArrayList;
+
 import com.sudoku.android.activity.GameActivity;
 import com.sudoku.android.activity.R;
 import com.sudoku.objects.SudokuData.Input;
@@ -114,6 +116,8 @@ public class GridView extends View {
 				Rect r = new Rect(0,(int)(i*height),(int)(getWidth()), (int) (i*height+3));
 				canvas.drawRect(r,minor_line);
 			}
+			Rect r = new Rect(0,(int)(getHeight()-5),(int)(getWidth()), (int) (getHeight()));
+			canvas.drawRect(r,major_line);
 		}
 		
 		//verticals
@@ -126,6 +130,8 @@ public class GridView extends View {
 				Rect r = new Rect((int)(i*width),0, (int) (i*width+3),(int)(getHeight()));;
 				canvas.drawRect(r,minor_line);
 			}
+			Rect r = new Rect((int)(getWidth()-5),0, (int) (getWidth()),(int)(getHeight()));
+			canvas.drawRect(r,major_line);
 		}
 		
 		// Draw Selection
@@ -148,11 +154,28 @@ public class GridView extends View {
 			for(int j=0; j<9; j++){
 				if(solve_mode==false){
 					if(grid.getType(i, j)!= Input.BLANK){
+						pen.setTextSize(0.75f*height);
 						setPen(pen, i, j);
 						canvas.drawText(String.valueOf(grid.getValue(i, j)), j*width + x, i*height + y, pen);
 					}
+					else if(game.possibilities.isChecked()){
+						ArrayList<Integer> possible = game.getGrid().getPossibilities(i, j);
+						pen.setColor(getResources().getColor(R.color.origin_numbers));
+						pen.setTextSize(0.25f*height);
+						for(int k=0; k<possible.size();k++){
+							int v =possible.get(k);
+							float w_p = width/3;
+							float h_p = height/3;
+							float x_p = w_p/2;
+							float y_p = h_p/2;
+							int i_p= (v-1)/3;
+							int j_p =(v-1)%3;
+							canvas.drawText(String.valueOf(v), j*width+j_p*w_p+x_p, i*height+i_p*h_p+y_p- (fm.ascent+fm.descent)/4, pen);
+						}
+					}
 				}
 				else{
+					pen.setTextSize(0.75f*height);
 					setPen(pen, i, j);
 					canvas.drawText(String.valueOf(game.getSolution().getValue(i, j)), j*width + x, i*height + y, pen);
 				}
@@ -187,8 +210,8 @@ public class GridView extends View {
 		int row = Math.min(Math.max(x,0), 8);
 		int col = Math.min(Math.max(y,0), 8);
 		if(game.getGrid().getType(row, col)!= Input.ORIGINAL){
-			X=row;
-			Y=col;
+			Y=row;
+			X=col;
 			selection.set((int) (X*width), (int)(Y*height),(int) (X*width+width), (int)(Y*height+height));
 			invalidate(selection);
 			return true;
@@ -201,7 +224,7 @@ public class GridView extends View {
 		if(event.getAction()!= MotionEvent.ACTION_DOWN)
 			return super.onTouchEvent(event);
 
-		boolean validSelect = select((int)(event.getX()/width), (int)(event.getY()/height));
+		boolean validSelect = select((int)(event.getY()/width), (int)(event.getX()/height));
 		if(validSelect){
 			check_mode=false;
 			solve_mode=false;

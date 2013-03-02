@@ -162,7 +162,7 @@ public class SudokuGrid implements Parcelable{
     
     // Help tools for user
     
-    ArrayList<Integer> getPossibilities(int i, int j){
+    public ArrayList<Integer> getPossibilities(int i, int j){
     	ArrayList<Integer> p = new ArrayList<Integer>();
     	for(int v=1;v<=9;v++){
     		if(lignePossible(i, v) && colonnePossible(j, v) && carrePossible(i, j, v)){

@@ -58,10 +58,10 @@ public class Keypad extends Dialog{
 	
 	private void setTileValue(int value){
 		if(value == 0){
-			gridView.getGame().getGrid().insertValue(gridView.getCol(), gridView.getRow(), value, Input.BLANK);
+			gridView.getGame().getGrid().insertValue( gridView.getRow(), gridView.getCol(),value, Input.BLANK);
 		}
 		else{
-			gridView.getGame().getGrid().insertValue(gridView.getCol(), gridView.getRow(), value, Input.USER);
+			gridView.getGame().getGrid().insertValue( gridView.getRow(),gridView.getCol(), value, Input.USER);
 		}
 		gridView.invalidate();
 	}

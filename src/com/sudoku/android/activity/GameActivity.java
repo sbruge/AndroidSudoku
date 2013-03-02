@@ -15,6 +15,9 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
@@ -27,6 +30,7 @@ public class GameActivity extends Activity{
 	private SudokuGrid gridSolve;
 	private GridView gridView;
 	private LinearLayout mainLayout;
+	public CheckBox possibilities;
 	
     
 	@Override
@@ -49,6 +53,8 @@ public class GameActivity extends Activity{
 		check.setText("Check");
 		Button solve = new Button(this);
 		solve.setText("Solve");
+	    possibilities = new CheckBox(this);
+	    possibilities.setText("Show possibilities");
 		
 		mainLayout = new LinearLayout(this);
 		mainLayout.setWeightSum(2);
@@ -63,6 +69,7 @@ public class GameActivity extends Activity{
 		buttonLayout.setOrientation(LinearLayout.VERTICAL);
 		buttonLayout.addView(check);
 		buttonLayout.addView(solve);
+		buttonLayout.addView(possibilities);
 		
 		mainLayout.addView(buttonLayout);
 		mainLayout.addView(gameLayout);
@@ -91,6 +98,14 @@ public class GameActivity extends Activity{
 					
 				}
 			});
+		 
+		 possibilities.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				gridView.invalidate();
+			}
+		});
 	}
 	
 	
